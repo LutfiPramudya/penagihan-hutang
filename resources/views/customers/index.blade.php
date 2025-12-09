@@ -18,6 +18,8 @@
                     <th>Nama Debitur</th>
                     <th>No. HP</th>
                     <th>Alamat</th>
+                    <th>Status Verifikasi</th>
+                    <th>Limit</th>
                     <th>Catatan</th>
                     <th>Aksi</th>
                 </tr>
@@ -30,6 +32,15 @@
                     <td class="fw-bold">{{ $customer->name }}</td>
                     <td>{{ $customer->phone }}</td>
                     <td>{{ $customer->address }}</td>
+                    <td>
+                        <span class="badge 
+                            @if($customer->status_verifikasi==='disetujui') bg-success 
+                            @elseif($customer->status_verifikasi==='ditolak') bg-danger
+                            @else bg-warning text-dark @endif">
+                            {{ ucfirst($customer->status_verifikasi ?? 'menunggu') }}
+                        </span>
+                    </td>
+                    <td>Rp {{ number_format($customer->limit_pinjaman ?? 0,0,',','.') }}</td>
                     <td>{{ $customer->note }}</td>
                     <td>
                         <div class="d-flex justify-content-center gap-2 flex-wrap">

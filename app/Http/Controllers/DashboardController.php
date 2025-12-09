@@ -10,11 +10,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $verifiedPayments = Payment::where('is_verified', true)->sum('amount');
         return view('dashboard.index', [
             'totalCustomers'  => Customer::count(),
             'totalDebts'      => Debt::sum('amount'),
-            'totalPayments'   => Payment::sum('amount'),
-            'totalRemaining'  => max(0, Debt::sum('amount') - Payment::sum('amount')),
+            'totalPayments'   => $verifiedPayments,
+            'totalRemaining'  => max(0, Debt::sum('amount') - $verifiedPayments),
         ]);
     }
 }

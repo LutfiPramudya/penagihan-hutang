@@ -22,20 +22,21 @@ class PaymentController extends Controller
             'note'   => ['nullable', 'string'],
         ]);
 
-        $data['debt_id'] = $debt->id;
+        $data['debt_id']    = $debt->id;
+        $data['is_verified'] = true;
+        $data['verified_at'] = now();
+        $data['recorded_by'] = 'admin';
 
         Payment::create($data);
 
-        $totalPaid = $debt->payments()->sum('amount');
-
-        if ($totalPaid >= $debt->amount) {
-            $debt->update([
-                'status' => 'lunas',
-            ]);
-        }
+        $totalPaid   = $debt->payments()->where('is_verified', true)->sum('amount');
+        $totalTarget = $debt->total_pengembalian ?: $debt->amount;
+        $debt->update([
+            'status' => $totalPaid >= $totalTarget ? 'lunas' : 'belum lunas',
+        ]);
 
         return redirect()
             ->route('customers.show', $customer->id)
-            ->with('success', 'Pembayaran berhasil ditambahkan!');
+            ->with('success', 'Pembayaran berhasil ditambahkan dan terverifikasi!');
     }
 }
