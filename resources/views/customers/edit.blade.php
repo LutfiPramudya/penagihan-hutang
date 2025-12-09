@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mt-5" style="max-width: 700px;">
 
-    <h2 class="fw-bold text-center mb-4">Edit Data Debitur</h2>
+    <h2 class="fw-bold text-center mb-4">Edit / Verifikasi Debitur</h2>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -44,9 +44,30 @@
             <textarea name="note" class="form-control" rows="2">{{ old('note', $customer->note) }}</textarea>
         </div>
 
-        <div class="d-flex justify-content-between">
+        <hr class="my-4">
+        <h5 class="fw-bold">Verifikasi & Limit</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Status Verifikasi</label>
+                <select name="status_verifikasi" class="form-select">
+                    @foreach (['menunggu'=>'Menunggu','disetujui'=>'Disetujui','ditolak'=>'Ditolak'] as $val=>$label)
+                        <option value="{{ $val }}" @selected(old('status_verifikasi',$customer->status_verifikasi)===$val)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Limit Pinjaman (Rp)</label>
+                <input type="number" name="limit_pinjaman" class="form-control" min="0" step="1000" value="{{ old('limit_pinjaman', $customer->limit_pinjaman) }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Alasan Penolakan</label>
+                <input type="text" name="alasan_penolakan" class="form-control" value="{{ old('alasan_penolakan', $customer->alasan_penolakan) }}" placeholder="Opsional saat ditolak">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
             <a href="{{ route('customers.index') }}" class="btn btn-secondary">Kembali</a>
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </form>
 

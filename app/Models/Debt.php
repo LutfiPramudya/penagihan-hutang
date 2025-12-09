@@ -11,10 +11,32 @@ class Debt extends Model
 
     protected $fillable = [
         'customer_id',
+        'profil_id',
         'amount',
+        'tenor_bulan',
+        'bunga_persen',
+        'total_pengembalian',
+        'cicilan_per_bulan',
+        'tanggal_pengajuan',
+        'disetujui_pada',
+        'tanggal_jatuh_tempo',
         'date',
         'status',
+        'approval_status',
+        'approved_at',
+        'rejected_reason',
         'note',
+    ];
+
+    protected $casts = [
+        'tanggal_pengajuan'   => 'datetime',
+        'disetujui_pada'      => 'datetime',
+        'tanggal_jatuh_tempo' => 'date',
+        'date'                => 'date',
+        'bunga_persen'        => 'decimal:2',
+        'total_pengembalian'  => 'decimal:2',
+        'cicilan_per_bulan'   => 'decimal:2',
+        'approved_at'         => 'datetime',
     ];
 
     public function customer()

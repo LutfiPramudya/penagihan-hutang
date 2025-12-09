@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('amount'); 
             
             // penghapusan hutang
-            $table->integer('amount')
+            $table->integer('amount');
 
             // Tanggal hutang
             $table->date('date');

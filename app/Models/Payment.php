@@ -13,7 +13,15 @@ class Payment extends Model
         'debt_id',
         'amount',
         'date',
-        'note'
+        'note',
+        'proof_path',
+        'is_verified',
+        'verified_at',
+    ];
+
+    protected $casts = [
+        'verified_at' => 'datetime',
+        'is_verified' => 'boolean',
     ];
 
     public function debt()

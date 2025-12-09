@@ -63,48 +63,92 @@
         }
 
         .hamburger {
-    font-size: 28px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.0s ease;
+        }
 
-.hamburger.active {
-    transform: rotate(180deg);
-}
-
+        .hamburger.active {
+            transform: none;
+        }
     </style>
+    @php
+        $isLoginPage = request()->routeIs('login');
+    @endphp
 </head>
 
-<body>
+<body class="{{ $isLoginPage ? 'bg-light' : '' }}">
 
    {{-- SIDEBAR --}}
-<div id="sidebar">
+@auth
+    @if(!$isLoginPage)
+    <div id="sidebar">
 
-    {{-- HAMBURGER INSIDE SIDEBAR --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+        {{-- HAMBURGER INSIDE SIDEBAR --}}
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <span class="hamburger" onclick="toggleSidebar()" style="font-size: 26px; cursor:pointer;">
-            ☰
-        </span>
+            <span class="hamburger" onclick="toggleSidebar()" style="font-size: 26px; cursor:pointer;" aria-label="Toggle sidebar">&#9776;</span>
+        </div>
+
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('dashboard') }}" class="d-block mb-3 fw-semibold text-decoration-none">
+                Dashboard
+            </a>
+
+            <a href="{{ route('customers.index') }}" class="d-block mb-3 fw-semibold text-decoration-none">
+                Kelola Debitur
+            </a>
+
+            <a href="{{ route('admin.loans.index') }}" class="d-block mb-3 fw-semibold text-decoration-none">
+                Kelola Pinjaman
+            </a>
+
+            <a href="{{ route('admin.loans.payments.verify') }}" class="d-block mb-3 fw-semibold text-decoration-none">
+                Verifikasi Pembayaran
+            </a>
+        @endif
+
+        @if(auth()->user()->role === 'customer')
+            <hr>
+            <div class="small text-muted text-uppercase mb-2">Area Klien</div>
+            <a href="{{ route('client.profile') }}" class="d-block mb-2 text-decoration-none">
+                Isi Data Diri
+            </a>
+            <a href="{{ route('client.loans.index') }}" class="d-block mb-2 text-decoration-none">
+                Peminjaman Saya
+            </a>
+            <a href="{{ route('client.payments') }}" class="d-block mb-2 text-decoration-none">
+                Riwayat Pembayaran
+            </a>
+        @endif
     </div>
-
-    <a href="{{ route('dashboard') }}" class="d-block mb-3 fw-semibold text-decoration-none">
-        Dashboard
-    </a>
-
-    <a href="{{ route('customers.index') }}" class="d-block mb-3 fw-semibold text-decoration-none">
-        Kelola Debitur
-    </a>
-</div>
+    @endif
+@endauth
 
 
     {{-- OVERLAY --}}
-    <div id="overlay" onclick="toggleSidebar()"></div>
+    @if(auth()->check() && !$isLoginPage)
+        <div id="overlay" onclick="toggleSidebar()"></div>
+    @endif
 
     {{-- NAVBAR --}}
-    <nav>
-        <span class="hamburger" onclick="toggleSidebar()">☰</span>
-        Aplikasi Penagihan Hutang
+    <nav class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            @if(auth()->check() && !$isLoginPage)
+                <span class="hamburger" onclick="toggleSidebar()" aria-label="Toggle sidebar">&#9776;</span>
+            @endif
+            Aplikasi Penagihan Hutang
+        </div>
+
+        @if(auth()->check() && !$isLoginPage)
+            <form action="{{ route('logout') }}" method="POST" class="d-flex align-items-center gap-2 m-0">
+                @csrf
+                <span class="small text-white">
+                    {{ auth()->user()->role === 'admin' ? 'Admin: ' : 'Client: ' }}{{ auth()->user()->name }}
+                </span>
+                <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+            </form>
+        @endif
     </nav>
 
     {{-- PAGE CONTENT --}}
@@ -117,27 +161,21 @@
 
     {{-- SIDEBAR SCRIPT --}}
     <script>
-           function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('overlay');
-    const hamburgers = document.querySelectorAll('.hamburger');
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const hamburgers = document.querySelectorAll('.hamburger');
 
-    sidebar.classList.toggle('show');
+            sidebar.classList.toggle('show');
 
-    if (sidebar.classList.contains('show')) {
-        overlay.style.display = 'block';
-
-        // PUTAR semua hamburger (navbar & sidebar)
-        hamburgers.forEach(h => h.classList.add('active'));
-
-    } else {
-        overlay.style.display = 'none';
-
-        // KEMBALIKAN ke normal
-        hamburgers.forEach(h => h.classList.remove('active'));
-    }
-}
-
+            if (sidebar.classList.contains('show')) {
+                overlay.style.display = 'block';
+                hamburgers.forEach(h => h.classList.add('active'));
+            } else {
+                overlay.style.display = 'none';
+                hamburgers.forEach(h => h.classList.remove('active'));
+            }
+        }
     </script>
 
 </body>
